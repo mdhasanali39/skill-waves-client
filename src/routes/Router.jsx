@@ -7,12 +7,17 @@ import MyBids from "../pages/MyBids/MyBids";
 import BidRequests from "../pages/BidRequests/BidRequests";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
+import JobDetails from "../pages/JobDetails/JobDetails";
+import UpdateJob from "../pages/UpdateJob/UpdateJob";
+import PrivateRoute from "./PrivateRoute";
+import ErrorPage from "../pages/ErrorPage/ErrorPage";
+
 
 const router = createBrowserRouter([
     {
         path: '/',
         element: <MainLayout></MainLayout>,
-        errorElement: <h2>page not found</h2>,
+        errorElement: <ErrorPage></ErrorPage>,
         children: [
             {
                 index: true,
@@ -20,19 +25,32 @@ const router = createBrowserRouter([
             },
             {
                 path: 'add-job',
-                element: <AddJob></AddJob>
+                element: <PrivateRoute>
+                    <AddJob></AddJob>
+                </PrivateRoute>
+            },
+            {
+                path: 'update-job/:id',
+                element: <UpdateJob></UpdateJob>,
+                loader: ({params})=> fetch(`https://skill-waves-server.vercel.app/api/v1/job/${params.id}`, {credentials: 'include'})
             },
             {
                 path: 'my-posted-jobs',
-                element: <MyPostedJobs></MyPostedJobs>
+                element: <PrivateRoute>
+                    <MyPostedJobs></MyPostedJobs>
+                </PrivateRoute>
             },
             {
                 path: 'my-bids',
-                element: <MyBids></MyBids>
+                element: <PrivateRoute>
+                    <MyBids></MyBids>
+                </PrivateRoute>
             },
             {
                 path: 'bid-requests',
-                element: <BidRequests></BidRequests>
+                element: <PrivateRoute>
+                    <BidRequests></BidRequests>
+                </PrivateRoute>
             },
             {
                 path: 'login',
@@ -41,6 +59,13 @@ const router = createBrowserRouter([
             {
                 path: 'register',
                 element: <Register></Register>
+            },
+            {
+                path: 'job/:id',
+                element: <PrivateRoute>
+                    <JobDetails></JobDetails>
+                </PrivateRoute>,
+                loader: ({params})=> fetch(`https://skill-waves-server.vercel.app/api/v1/job/${params.id}`,{credentials:'include'})
             }
         ]
     }
